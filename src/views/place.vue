@@ -50,7 +50,7 @@ export default {
       var m = myDate.getMinutes(); //获取当前分钟数(0-59)
       var s = myDate.getSeconds(); //获取当前秒
       this.time =
-        year + "-" + mon + "-" + date + "-" + " " + h + ":" + m + ":" + s;
+        year + "-" + mon + "-" + date + "" + " " + h + ":" + m + ":" + s;
     }
   }
 };
