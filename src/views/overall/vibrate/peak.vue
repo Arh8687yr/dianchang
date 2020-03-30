@@ -42,14 +42,14 @@
           >立即查询</el-button>
         </div>
       </div>
-      <div ref="peak" style="width: 100%;height:450px;margin-top: 30px"></div>
+      <div ref="peak" style="width: 99%;height:450px;margin-top: 30px"></div>
     </el-main>
     <Place />
   </basic-container>
 </template>
 
 <script>
-import option from "../../../module/peak";
+// import option from "../../../module/peak";
 import Heads from "../../heads";
 import Place from "../../place";
 export default {
@@ -57,10 +57,70 @@ export default {
     return {
       radio4: "1",
       id: "1",
-      item: "",
+      item: [],
       name: "",
       time: "",
       rotate: "",
+      option: {
+        title: {
+          text: "峰峰值",
+          left: "center",
+          align: "right"
+        },
+        color: ["rgb(125, 121, 187)"],
+        // tooltip: {
+        //     trigger: 'axis',
+        //     axisPointer: {
+        //         type: 'cross',
+        //         crossStyle: {
+        //             color: '#999'
+        //         }
+        //     }
+        // },
+        legend: {
+          // 图例样式
+          right: 30,
+          top: "45%",
+          orient: "vertical",
+          icon: "line",
+          selectedMode: false,
+          textStyle: {
+            color: "rgb(125, 121, 187)",
+            fontSize: 16
+          },
+          data: ["三轴"]
+        },
+        xAxis: {
+          name: "当前时间",
+          type: "category",
+          boundaryGap: false, // 不环绕刻度线,
+          data: this.item
+        },
+        yAxis: [
+          {
+            name: "um",
+            type: "value",
+            max: 144,
+            min: 136
+          }
+        ],
+        series: [
+          {
+            name: "三轴",
+            label: {
+              show: true,
+              position: "right"
+            },
+            data: [141, 137, 138, 142, 141.5, 137.5, 140],
+            type: "line",
+            // 线条颜色
+            lineStyle: {
+              color: "rgb(125, 121, 187)"
+            },
+            symbol: "none" // 拐点标记的图形
+          }
+        ]
+      },
       options: [
         {
           value: "选项1",
@@ -110,9 +170,23 @@ export default {
       radio: 3
     };
   },
+  created() {
+    this.item = [
+      "16:11:30",
+      "16:17:00",
+      "16:17:30",
+      "16:18:00",
+      "16:18:50",
+      "16:19:05",
+      "16:20:00"
+    ];
+    console.log(this.item);
+  },
   mounted() {
     let myChart = this.$echarts.init(this.$refs.peak);
-    myChart.setOption(option);
+    myChart.setOption(this.option);
+    this.item = this.option.title.text;
+    console.log(this.option.title);
   },
   components: { Place, Heads }
 };
@@ -122,7 +196,7 @@ export default {
 .el-main {
   background-color: #fff;
   color: #333;
-  /* height: 100vh; */
+  height: 85vh;
 }
 .select {
   margin: 20px 40px 0 20px;
@@ -147,5 +221,8 @@ export default {
 }
 .el-select {
   margin-top: 40px;
+}
+.el-scrollbar__wrap {
+  overflow: hidden;
 }
 </style>
