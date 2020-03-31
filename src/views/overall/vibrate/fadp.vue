@@ -42,87 +42,141 @@
           >立即查询</el-button>
         </div>
       </div>
-      <div ref="peak" style="width: 100%;height:450px;margin-top: 30px"></div>
+
+      <div
+        class="demo6 echart-box"
+        style="width: 99%;height:450px;margin-top: 30px"
+        ref="myechart"
+        id="main"
+      ></div>
     </el-main>
+
     <Place />
   </basic-container>
 </template>
-
 <script>
-import option from "../../../module/peak";
 import Heads from "../../heads";
 import Place from "../../place";
+function randomData() {
+  now = new Date(+now+oneDay);
+  // 数据
+  value = value + Math.random() * 21 - 10;
+  return {
+    name: now.toString(),
+    // value: [
+    //   [now.getHours(), now.getMinutes(), now.getSeconds()].join("/"),
+    //   Math.round(value)
+    // ]
+    value: [
+      [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
+      Math.round(value)
+    ]
+  };
+}
+
+var data = [];
+var now = +new Date(2020, 3, 31);
+var oneDay = 24 * 3600 * 1000;
+var value = Math.random() * 1000;
+for (var i = 0; i < 1000; i++) {
+  data.push(randomData());
+}
+
 export default {
+  name: "fadp",
+  components: { Place, Heads },
   data() {
-    return {
-      radio4: "1",
-      id: "1",
-      item: "",
-      name: "",
-      time: "",
-      rotate: "",
-      options: [
-        {
-          value: "选项1",
-          label: "轴承一"
+    return {};
+  },
+  methods:{
+    handleEcharts(){
+      let myChart = this.$echarts.init(document.getElementById("main"));
+    //这个是第二种引用方法，必须先进行声明
+    let option = {
+      title: {
+        text: "一倍频幅值"
+      },
+      tooltip: {
+        trigger: "axis",
+        // 数据提示框容器
+        formatter: function(params) {
+          params = params[0];
+          var date = new Date(params.name);
+          return (
+            date.getDate() +
+            "/" +
+            (date.getMonth() + 1) +
+            "/" +
+            date.getFullYear() +
+            " : " +
+            params.value[1]
+          );
         },
-        {
-          value: "选项2",
-          label: "轴承二"
-        },
-        {
-          value: "选项3",
-          label: "轴承三"
-        },
-        {
-          value: "选项4",
-          label: "轴承四"
-        },
-        {
-          value: "选项5",
-          label: "轴承五"
+        axisPointer: {
+          animation: false
         }
-      ],
-      options1: [
-        {
-          value: "选项1",
-          label: "最近2分钟"
-        },
-        {
-          value: "选项2",
-          label: "最近10分钟"
-        },
-        {
-          value: "选项3",
-          label: "最近20分钟"
-        },
-        {
-          value: "选项4",
-          label: "最近40分钟"
-        },
-        {
-          value: "选项5",
-          label: "最近1小时"
+      },
+      xAxis: {
+        type: "time",
+        splitLine: {
+          show: false
         }
-      ],
-      axleName: "",
-      value1: true,
-      radio: 3
+      },
+      yAxis: {
+        type: "value",
+        boundaryGap: [0, "100%"],
+        splitLine: {
+          show: false
+        }
+      },
+      series: [
+        {
+          // name: "模拟数据",
+          type: "line",
+          showSymbol: false,
+          hoverAnimation: false,
+          data: data
+        }
+      ]
     };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+    this.timer = setInterval(function() {
+      for (var i = 0; i < 5; i++) {
+        data.shift();
+        data.push(randomData());
+      }
+      //在这个方法中定义的图表变量必须把这个方法放到可以检查出来的地方
+      myChart.setOption({
+        series: [
+          {
+            data: data
+          }
+        ]
+        //在执行方法的时候重新给它一个值
+      });
+    }, 1000);
+    }
   },
   mounted() {
-    let myChart = this.$echarts.init(this.$refs.peak);
-    myChart.setOption(option);
+     this.handleEcharts()
   },
-  components: { Place, Heads }
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer); //在Vue实例销毁前，清除我们的定时器
+    }
+  }
 };
 </script>
+ 
 
 <style scoped>
 .el-main {
   background-color: #fff;
   color: #333;
-  /* height: 100vh; */
+  height: 85vh;
 }
 .select {
   margin: 20px 40px 0 20px;
@@ -148,4 +202,13 @@ export default {
 .el-select {
   margin-top: 40px;
 }
+.el-scrollbar__wrap {
+  overflow: hidden;
+}
+/* .demo6 {
+  width: 1000px;
+  height: 600px;
+  background: #cce6f0;
+  margin: 0 auto;
+} */
 </style>

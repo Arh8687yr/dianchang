@@ -94,7 +94,15 @@ export default {
           name: "当前时间",
           type: "category",
           boundaryGap: false, // 不环绕刻度线,
-          data: this.item
+          data: [
+            "16:11:30",
+            "16:17:00",
+            "16:17:30",
+            "16:18:00",
+            "16:18:50",
+            "16:19:05",
+            "16:20:00"
+          ]
         },
         yAxis: [
           {
@@ -171,22 +179,14 @@ export default {
     };
   },
   created() {
-    this.item = [
-      "16:11:30",
-      "16:17:00",
-      "16:17:30",
-      "16:18:00",
-      "16:18:50",
-      "16:19:05",
-      "16:20:00"
-    ];
-    console.log(this.item);
+    // this.item = ;
+    // console.log(this.item);
   },
   mounted() {
     let myChart = this.$echarts.init(this.$refs.peak);
     myChart.setOption(this.option);
-    this.item = this.option.title.text;
-    console.log(this.option.title);
+    // this.item = this.option.title.text;
+    // console.log(this.option.title);
   },
   components: { Place, Heads }
 };

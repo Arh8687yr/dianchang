@@ -3,7 +3,7 @@
     <el-footer>
       <div style="margin-left: 40px;display:flex;justify-content: space-around">
         <div>机组: #4组</div>
-        <div>实时时间: {{time}}</div>
+        <div>实时数据时间: {{date | formatDateTime}}</div>
         <div>实时转速: {{rotate}}</div>
         <div>状态: {{item}}</div>
       </div>
@@ -13,7 +13,7 @@
 
 <script>
 // import { heads, footers } from "../api/overall/monitoring";
-import { heads } from "../api/overall/monitoring";
+// import { heads } from "../api/overall/monitoring";
 
 export default {
   data() {
@@ -23,8 +23,37 @@ export default {
       item: "",
       name: "",
       time: "",
-      rotate: ""
+      rotate: "",
+      date: new Date()
     };
+  },
+  filters: {
+    formatDateTime(value) {
+      let date = new Date(value);
+      let y = date.getFullYear();
+      let MM = date.getMonth() + 1;
+      MM = MM < 10 ? "0" + MM : MM;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      let h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      let m = date.getMinutes();
+      m = m < 10 ? "0" + m : m;
+      let s = date.getSeconds();
+      s = s < 10 ? "0" + s : s;
+      return y + "-" + MM + "-" + d + " " + h + ":" + m + ":" + s;
+    }
+  },
+  mounted() {
+    var that = this;
+    this.timer = setInterval(() => {
+      that.date = new Date(); //修改数据date
+    }, 1000);
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer); //在Vue实例销毁前，清除我们的定时器
+    }
   },
   created() {
     //   获取数据时间
@@ -32,27 +61,25 @@ export default {
     //     this.time= res.data.data.ticktime;
     //     this.rotate = res.data.data.zsval
     // }),
-    // 获取当前时间-未实时更新
-    this.getNowTime(),
-    heads(this.id).then(res => {
-      this.item = res.data.data.devicestatus;
-      this.name = res.data.data.descc;
-      console.log(res.data.data.devicestatus);
-    });
+    // heads(this.id).then(res => {
+    //   this.item = res.data.data.devicestatus;
+    //   this.name = res.data.data.descc;
+    //   console.log(res.data.data.devicestatus);
+    // });
   },
-  methods: {
-    getNowTime() {
-      var myDate = new Date();
-      var year = myDate.getFullYear();
-      var mon = myDate.getMonth() + 1;
-      var date = myDate.getDate();
-      var h = myDate.getHours(); //获取当前小时数(0-23)
-      var m = myDate.getMinutes(); //获取当前分钟数(0-59)
-      var s = myDate.getSeconds(); //获取当前秒
-      this.time =
-        year + "-" + mon + "-" + date + "" + " " + h + ":" + m + ":" + s;
-    }
-  }
+  // methods: {
+  //   getNowTime() {
+  //     var myDate = new Date();
+  //     var year = myDate.getFullYear();
+  //     var mon = myDate.getMonth() + 1;
+  //     var date = myDate.getDate();
+  //     var h = myDate.getHours(); //获取当前小时数(0-23)
+  //     var m = myDate.getMinutes(); //获取当前分钟数(0-59)
+  //     var s = myDate.getSeconds(); //获取当前秒
+  //     this.time =
+  //       year + "-" + mon + "-" + date + "" + " " + h + ":" + m + ":" + s;
+  //   }
+  // }
 };
 </script>
 

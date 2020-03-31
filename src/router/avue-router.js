@@ -191,7 +191,7 @@ RouterPlugin.install = function (vue, router, store, i18n) {
       // for循环结束
       // 这个first 卡的其实就是首路由
       if (first) {
-        console.log(aRouter)
+        // console.log(aRouter)
         if (!this.routerList.includes(aRouter[0][propsDefault.path])) {
           this.safe.$router.addRoutes(aRouter)
           this.routerList.push(aRouter[0][propsDefault.path])
