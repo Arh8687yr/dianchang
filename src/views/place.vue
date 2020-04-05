@@ -4,7 +4,7 @@
       <div style="margin-left: 40px;display:flex;justify-content: space-around">
         <div>机组: #4组</div>
         <div>实时数据时间: {{date | formatDateTime}}</div>
-        <div>实时转速: {{rotate}}</div>
+        <div>实时转速: {{rotate}}RPM</div>
         <div>状态: {{item}}</div>
       </div>
     </el-footer>
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-// import { heads, footers } from "../api/overall/monitoring";
+import { heads, footers } from "../api/overall/monitoring";
 // import { heads } from "../api/overall/monitoring";
 
 export default {
@@ -45,9 +45,10 @@ export default {
     }
   },
   mounted() {
-    var that = this;
+    let _this = this
     this.timer = setInterval(() => {
-      that.date = new Date(); //修改数据date
+      _this.date = new Date(); //修改数据date
+      _this.createData(_this.id)
     }, 1000);
   },
   beforeDestroy() {
@@ -56,30 +57,22 @@ export default {
     }
   },
   created() {
-    //   获取数据时间
-    // footers(this.id).then(res=>{
-    //     this.time= res.data.data.ticktime;
-    //     this.rotate = res.data.data.zsval
-    // }),
-    // heads(this.id).then(res => {
-    //   this.item = res.data.data.devicestatus;
-    //   this.name = res.data.data.descc;
-    //   console.log(res.data.data.devicestatus);
-    // });
+    console.log(1)
   },
-  // methods: {
-  //   getNowTime() {
-  //     var myDate = new Date();
-  //     var year = myDate.getFullYear();
-  //     var mon = myDate.getMonth() + 1;
-  //     var date = myDate.getDate();
-  //     var h = myDate.getHours(); //获取当前小时数(0-23)
-  //     var m = myDate.getMinutes(); //获取当前分钟数(0-59)
-  //     var s = myDate.getSeconds(); //获取当前秒
-  //     this.time =
-  //       year + "-" + mon + "-" + date + "" + " " + h + ":" + m + ":" + s;
-  //   }
-  // }
+  methods: {
+    //   获取数据时间
+    createData(id){
+      footers(id).then(res => {
+      // this.time = res.data.data.ticktime
+      this.rotate = res.data.data.zsval
+      })
+      heads(id).then(res => {
+        this.item = res.data.data.devicestatus
+        this.name = res.data.data.descc
+      })
+    }
+    
+  }
 };
 </script>
 

@@ -31,7 +31,7 @@ NProgress.configure({
 //http request拦截
 axios.interceptors.request.use(config => {
   //开启 progress bar
-  NProgress.start();
+  // NProgress.start();
   const meta = (config.meta || {});
   const isToken = meta.isToken === false;
   config.headers['Authorization'] = `Basic ${Base64.encode(`${website.clientId}:${website.clientSecret}`)}`;
@@ -50,7 +50,7 @@ axios.interceptors.request.use(config => {
 //http response 拦截
 axios.interceptors.response.use(res => {
   //关闭 progress bar
-  NProgress.done();
+  // NProgress.done();
   //获取状态码
   const status = res.data.code || res.status;
   const statusWhiteList = website.statusWhiteList || [];

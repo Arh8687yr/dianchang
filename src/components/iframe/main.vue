@@ -47,7 +47,7 @@
       show() {
         NProgress.start();
       },
-      // 隐藏等待狂
+      // 隐藏等待框
       hide() {
         NProgress.done();
       },

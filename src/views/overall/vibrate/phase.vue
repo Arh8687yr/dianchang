@@ -57,11 +57,9 @@
 <script>
 import Heads from "../../heads";
 import Place from "../../place";
-// 获取当前时间的时间戳
-var oldDate = Date.parse(new Date())
-var newDate = Date.parse(new Date()) + 600 *1000
 function randomData() {
-  now = new Date(+now+oneDay);
+  // 时间间隔 一分钟+200
+  now = new Date(+now + 200);
   // 数据
   value = value + Math.random() * 21 - 10;
   return {
@@ -70,123 +68,94 @@ function randomData() {
     //   [now.getHours(), now.getMinutes(), now.getSeconds()].join("/"),
     //   Math.round(value)
     // ]
-    value: [
-      [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-      Math.round(value)
-    ]
+    // 数据格式：x轴为当前时间now y轴随机数取整
+    // 当前时间减去过去时间*1000  就是多少分钟前
+    value: [now-200*1000, Math.round(value)]
   };
 }
 
 var data = [];
-var now = +new Date(2020, 3, 31);
-var oneDay = 24 * 3600 * 1000;
+var now = new Date();
 var value = Math.random() * 1000;
 for (var i = 0; i < 1000; i++) {
   data.push(randomData());
 }
 
 export default {
-  name: "fadp",
+  name: "phase",
   components: { Place, Heads },
   data() {
     return {};
   },
-  created(){
-    console.log(data)
-  },
-  methods:{
-    handleEcharts(){
+  methods: {
+    handleEcharts() {
       let myChart = this.$echarts.init(document.getElementById("main"));
-    //这个是第二种引用方法，必须先进行声明
-    let option = {
-      title: {
-        text: "一倍频幅值"
-      },
-      tooltip: {
-        trigger: "axis",
-        // 数据提示框容器
-        formatter: function(params) {
-          params = params[0];
-          var date = new Date(params.name);
-          return (
-            date.getDate() +
-            "/" +
-            (date.getMonth() + 1) +
-            "/" +
-            date.getFullYear() +
-            " : " +
-            params.value[1]
-          );
+      let option = {
+        title: {
+          text: "一倍频相位"
         },
-        axisPointer: {
-          animation: false
-        }
-      },
-      xAxis: {
-        type: "time",
-        splitLine: {
-          show: false
-        }
-        // x轴的字
-      //  axisLabel: {
-      //    show: true,
-      //    showMinLabel: true,
-      //    showMaxLabel: true,
-      //    formatter: function (value) {
-      //      // 格式化成时分秒
-      //      let date = new Date(value);
-      //      let nowHours = date.getHours().toString();
-      //      let nowMin = date.getMinutes().toString();
-      //      let nowSeconds = date.getSeconds().toString();
-      //      var texts = [nowHours,nowMin,nowSeconds];
-      //      return texts.join(':');
-      //    }
-      },
-      yAxis: {
-        type: "value",
-        boundaryGap: [0, "100%"],
-        splitLine: {
-          show: false
-        }
-      },
-      series: [
-        {
-          // name: "模拟数据",
-          type: "line",
-          showSymbol: false,
-          hoverAnimation: false,
-          data: data
-        }
-      ]
-      }
-    
-    // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
-
-    // 读秒更新图表
-    this.timer = setInterval(function() {
-      // for (var i = 0; i < 5; i++) {
-      //   data.shift();
-      //   data.push(randomData());
-      // }
-      //在这个方法中定义的图表变量必须把这个方法放到可以检查出来的地方
-      myChart.setOption({
+        tooltip: {
+          trigger: "axis",
+          formatter: function(params) {
+            params = params[0];
+            var date = new Date(params.name);
+            return (
+              date.getDate() +
+              "/" +
+              (date.getMonth() + 1) +
+              "/" +
+              date.getFullYear() +
+              " : " +
+              params.value[1]
+            );
+          },
+          axisPointer: {
+            animation: false
+          }
+        },
+        xAxis: {
+          type: "time",
+          splitLine: {
+            show: false
+          }
+        },
+        yAxis: {
+          type: "value",
+          boundaryGap: [0, "100%"],
+          splitLine: {
+            show: false
+          }
+        },
         series: [
           {
+            name: "模拟数据",
+            type: "line",
+            showSymbol: false,
+            hoverAnimation: false,
             data: data
           }
-        ],
-        xAxis: [{
-          // min: startTime,
-          // max: endTime
-        }]
-        //在执行方法的时候重新给它一个值
-      });
-    }, 1000);
+        ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      this.timer = setInterval(function() {
+        //data.shift();
+        for (var i = 0; i < 5; i++) {
+          data.shift();
+          data.push(randomData());
+        }
+        myChart.setOption({
+          series: [
+            {
+              data: data
+            }
+          ]
+        });
+      }, 1000);
     }
   },
   mounted() {
-     this.handleEcharts()
+    this.handleEcharts();
   },
   beforeDestroy() {
     if (this.timer) {
